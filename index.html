@@ -321,9 +321,20 @@
     }
 
     // Demo response placeholder
-    output.textContent = 'Nimbus is analyzing your request: "' + input + '"\n\n[Demo Output]\nNimbus would provide a structured, context-aware response here.';
+    output.textContent = 'Nimbus is analyzing your request: "' + input + '"';
+
+    setTimeout(function(){
+      output.textContent = 'Nimbus is analyzing your request: "' + input + '"\n\n' + "https://placecats.com/300/200";
+    }, random(10000,60000));
+  }
+
+  function random(x,y){
+    const min = x;
+    const max = y;
+    const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+    return randomNumber;
   }
 </script>
-
+version 1.0.1
 </body>
 </html>
