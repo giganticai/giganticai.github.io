@@ -311,30 +311,39 @@
 </footer>
 
 <script>
-  function runNimbus() {
-    const input = document.getElementById('input').value.trim();
-    const output = document.getElementById('output');
+function runNimbus() {
+  const input = document.getElementById('input').value.trim();
+  const output = document.getElementById('output');
 
-    if (!input) {
-      output.textContent = 'Please enter a prompt to interact with Nimbus.';
-      return;
-    }
-
-    // Demo response placeholder
-    output.textContent = 'Nimbus is analyzing your request: "' + input + '"';
-
-    setTimeout(function(){
-      output.textContent = 'Nimbus is analyzing your request: "' + input + '"\n\n' + "https://placecats.com/300/200";
-    }, random(10000,60000));
+  if (!input) {
+    output.textContent = 'Please enter a prompt to interact with Nimbus.';
+    return;
   }
 
-  function random(x,y){
-    const min = x;
-    const max = y;
-    const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-    return randomNumber;
-  }
+  output.textContent = 'Nimbus is analyzing your request: "' + input + '"';
+
+  const delay = random(10000, 60000);
+
+  setTimeout(function () {
+    const width = random(200, 600);
+    const height = random(200, 600);
+
+    output.innerHTML = `
+      <p>Nimbus is analyzing your request: "${input}"</p>
+      <img 
+        src="https://placecats.com/${width}/${height}" 
+        alt="Nimbus Placeholder Cat"
+        style="margin-top:1rem; border-radius:0.5rem; max-width:100%;"
+      />
+    `;
+  }, delay);
+}
+
+function random(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 </script>
-version 1.0.1
+
+version 1.0.2
 </body>
 </html>
