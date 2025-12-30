@@ -301,7 +301,10 @@
       <p>Enter a prompt below to simulate how Nimbus would respond. (Demo interface)</p>
       <textarea id="input" placeholder="Ask Nimbus a question or give it a task..."></textarea>
       <button class="button" style="margin-top:1rem" onclick="runNimbus()">Run Nimbus</button>
-      <div id="output" class="app-output">Nimbus output will appear here.</div>
+      <div id="output" class="app-output">
+        Nimbus output will appear here.
+        <canvas id="nimbusCanvas" style="display:none;"></canvas>
+      </div>
     </div>
   </div>
 </section>
@@ -320,23 +323,71 @@ function runNimbus() {
     return;
   }
 
-  output.textContent = 'Nimbus is analyzing your request (2x proC): "' + input + '"';
+  output.textContent = 'Nimbus is analyzing your request: "' + input + '"';
 
-  const delay = random(10000, 60000);
+  const delay = random(0, 0);
 
-  setTimeout(function () {
-    const width = random(200, 600);
-    const height = random(200, 600);
+  setTimeout(() => {
+    const width = random(300, 600);
+    const height = random(300, 600);
 
-    output.innerHTML = `
-      <p>Nimbus is analyzing your request: "${input}"</p>
-      <img 
-        src="https://placecats.com/${width}/${height}" 
-        alt="Nimbus Placeholder Cat"
-        style="margin-top:1rem; border-radius:0.5rem; max-width:100%;"
-      />
-    `;
+    const imageUrl = `https://placecats.com/${width}/${height}`;
+    const logoUrl = `/assets/watermark.png`; // ← your logo here
+
+    createWatermarkedImage(imageUrl, logoUrl, output, input);
   }, delay);
+}
+
+function createWatermarkedImage(imageUrl, logoUrl, output, inputText) {
+  const canvas = document.getElementById('nimbusCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const baseImage = new Image();
+  const logoImage = new Image();
+
+  baseImage.crossOrigin = 'anonymous';
+  logoImage.crossOrigin = 'anonymous';
+
+  baseImage.onload = () => {
+    canvas.width = baseImage.width;
+    canvas.height = baseImage.height;
+
+    ctx.drawImage(baseImage, 0, 0);
+
+    logoImage.onload = () => {
+      // Scale watermark relative to image size
+      const scale = 0.18;
+      const logoWidth = baseImage.width * scale;
+      const ratio = logoImage.height / logoImage.width;
+      const logoHeight = logoWidth * ratio;
+
+      const padding = baseImage.width * 0.03;
+
+      const x = canvas.width - logoWidth - padding;
+      const y = canvas.height - logoHeight - padding;
+
+      // Optional opacity
+      ctx.globalAlpha = 0.65;
+      ctx.drawImage(logoImage, x, y, logoWidth, logoHeight);
+      ctx.globalAlpha = 1.0;
+
+      // Export final image
+      const finalImage = canvas.toDataURL('image/png');
+
+      output.innerHTML = `
+        <p>Nimbus is analyzing your request: "${inputText}"</p>
+        <img 
+          src="${finalImage}" 
+          alt="Nimbus Output"
+          style="margin-top:1rem; border-radius:0.5rem; max-width:100%;"
+        />
+      `;
+    };
+
+    logoImage.src = logoUrl;
+  };
+
+  baseImage.src = imageUrl;
 }
 
 function random(min, max) {
@@ -344,6 +395,7 @@ function random(min, max) {
 }
 </script>
 
-version 1.0.3
+
+version 1.0.4
 </body>
 </html>
